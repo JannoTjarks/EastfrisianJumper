@@ -10,7 +10,10 @@ const RUN_SPEED = 120
 const JUMP_HEIGTH = -250
 const DEATH_HEIGTH = 190
 
-var isFallingToDeath = false
+var healthPoints = 3
+var isDeath = false
+var isHurt = false
+var isInvincible = false
 var motion = Vector2()
 
 func _ready():
@@ -23,42 +26,94 @@ func _physics_process(delta):
 		motion.y += GRAVITY
 	else:
 		motion.y = 0
-		isFallingToDeath = true
+		isDeath = true
+		
+	if isDeath == false:
+		if Input.is_key_pressed(KEY_D):
+			if Input.is_key_pressed(KEY_L):
+				motion.x = min(motion.x + ACCELERATION, RUN_SPEED)
+			else: 
+				motion.x = min(motion.x + ACCELERATION, WALK_SPEED)
+			$Sprite.flip_h = false
+			if isHurt == false:
+				$Sprite.play("Run")
+		
+		elif Input.is_key_pressed(KEY_A):
+			if Input.is_key_pressed(KEY_L):
+				motion.x = max(motion.x - ACCELERATION, -RUN_SPEED)
+			else: 
+				motion.x = max(motion.x - ACCELERATION, -WALK_SPEED)
+			$Sprite.flip_h = true
+			if isHurt == false:
+				$Sprite.play("Run")
+		else:	
+			friction = true
+			if isInvincible == false:
+				$Sprite.play("Idle")
 	
-	if Input.is_key_pressed(KEY_D):
-		if Input.is_key_pressed(KEY_L):
-			motion.x = min(motion.x + ACCELERATION, RUN_SPEED)
-		else: 
-			motion.x = min(motion.x + ACCELERATION, WALK_SPEED)
-		$Sprite.flip_h = false
-		$Sprite.play("Run")
-	
-	elif Input.is_key_pressed(KEY_A):
-		if Input.is_key_pressed(KEY_L):
-			motion.x = max(motion.x - ACCELERATION, -RUN_SPEED)
-		else: 
-			motion.x = max(motion.x - ACCELERATION, -WALK_SPEED)
-		$Sprite.flip_h = true
-		$Sprite.play("Run")
-	else:
-		friction = true
-		$Sprite.play("Idle")
-
-	if is_on_floor():
-		if Input.is_key_pressed(KEY_SPACE):
-			motion.y = JUMP_HEIGTH
-		if friction == true:
-			motion.x = lerp(motion.x, 0, 0.2)
-	else:
-		if motion.y < 0:
-			$Sprite.play("Jump")
+		if is_on_floor():
+			if Input.is_key_pressed(KEY_SPACE):
+				motion.y = JUMP_HEIGTH
+			if friction == true:
+				motion.x = lerp(motion.x, 0, 0.2)
 		else:
-			if isFallingToDeath == false:
-				$Sprite.play("Fall")
+			if motion.y < 0:
+				if isHurt == false:
+					$Sprite.play("Jump")
 			else:
-				$Sprite.play("Hurt")
-				$Sprite.modulate = Color(1,0.3,0.3,0.8)
-		if friction == true:
-			motion.x = lerp(motion.x, 0, 0.05)
+				if isHurt == false:
+					$Sprite.play("Fall")
+				
+			if friction == true:
+				motion.x = lerp(motion.x, 0, 0.05)
+	
+		motion = move_and_slide(motion, UP)
+		for i in get_slide_count():
+			var collision = get_slide_collision(i)
+			for collisionGroup in collision.collider.get_groups():
+				if collisionGroup == "Spikes":
+					Hurt()
+		print (healthPoints)
+		if healthPoints <= 0:
+			isDeath = true
+	else:
+		Death()
 
-	motion = move_and_slide(motion, UP)
+func Death():
+	$Sprite.play("Hurt")
+	$Sprite.modulate = Color(1,0.3,0.3,0.8)
+		
+	var resetLevelTimer = Timer.new()
+	resetLevelTimer.set_wait_time(3)
+	resetLevelTimer.set_one_shot(true)
+	resetLevelTimer.connect("timeout",self,"ResetLevel") 
+	add_child(resetLevelTimer)
+	resetLevelTimer.start()
+
+func Hurt():
+	if isInvincible == false:
+		isInvincible = true
+		isHurt = true
+		$Sprite.play("Hurt")
+		healthPoints = healthPoints - 1
+		var InvincibleTimer = Timer.new()
+		InvincibleTimer.set_wait_time(2)
+		InvincibleTimer.set_one_shot(true)
+		InvincibleTimer.connect("timeout",self,"RemoveInvincibilityFrames") 
+		add_child(InvincibleTimer)
+		InvincibleTimer.start()
+		var HurtTimer = Timer.new()
+		HurtTimer.set_wait_time(1)
+		HurtTimer.set_one_shot(true)
+		HurtTimer.connect("timeout",self,"StopHurtAnimation") 
+		add_child(HurtTimer)
+		HurtTimer.start()
+
+func StopHurtAnimation():
+	isHurt = false
+
+func RemoveInvincibilityFrames():
+	isInvincible = false
+
+func ResetLevel():
+   get_tree().reload_current_scene()
