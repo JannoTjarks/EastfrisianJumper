@@ -12,6 +12,7 @@ position = Vector2( 140, 145 )
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
 SpawnPoint = NodePath("../SpawnPoint")
+LifebarNode = NodePath("../UI/Lifebar")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = ExtResource( 1 )
@@ -32,3 +33,12 @@ position = Vector2( 440.5, 188 )
 
 [node name="Spike3" parent="Spikes" instance=ExtResource( 2 )]
 position = Vector2( 456.5, 188 )
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Lifebar" type="Sprite" parent="UI"]
+position = Vector2( 32, 16 )
+scale = Vector2( 0.3, 0.3 )
+__meta__ = {
+"_edit_group_": true
+}
