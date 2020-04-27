@@ -1,26 +1,31 @@
 extends KinematicBody2D
 
 export(NodePath) var SpawnPoint
+export(NodePath) var EndPoint
 export(NodePath) var LifebarNode
 
 const UP = Vector2(0,-1)
 const ACCELERATION = 30
 const GRAVITY = 10
+const FALL_MAX = 300
 const WALK_SPEED = 70
 const RUN_SPEED = 120
-const JUMP_HEIGTH = -250
+const JUMP_HEIGTH = -280
 const DEATH_HEIGTH = 190
 
+var endpoint
 var lifebar
 var arrayLifebar
 var healthPoints = 3
 var isDeath = false
 var isHurt = false
 var isInvincible = false
+var levelIsOver = false
 var motion = Vector2()
 
 func _ready():
 	$".".position = get_node(SpawnPoint).position
+	endpoint = get_node(EndPoint).position
 	lifebar = get_node(LifebarNode)
 	arrayLifebar = [preload("res://Sprites/Player/Health/0hearts.png"),
 		preload("res://Sprites/Player/Health/1hearts.png"),
@@ -39,11 +44,19 @@ func _physics_process(delta):
 		Death()
 		return
 
+	if levelIsOver == true:
+		LevelEnd()
+		return
+
 	if $".".position.y < DEATH_HEIGTH:
-		motion.y += GRAVITY
+		if motion.y < FALL_MAX:
+			motion.y += GRAVITY
 	else:
 		motion.y = 0
 		isDeath = true
+
+	if $".".position.x > endpoint.x - 50:
+		levelIsOver = true
 		
 	if Input.is_key_pressed(KEY_D):
 		if Input.is_key_pressed(KEY_L):
@@ -61,7 +74,7 @@ func _physics_process(delta):
 		$Sprite.flip_h = true
 		if isHurt == false:
 			$Sprite.play("Run")
-	else:	
+	else:
 		friction = true
 		if isInvincible == false:
 			$Sprite.play("Idle")
@@ -78,10 +91,10 @@ func _physics_process(delta):
 		else:
 			if isHurt == false:
 				$Sprite.play("Fall")
-			
 		if friction == true:
 			motion.x = lerp(motion.x, 0, 0.05)
 
+	print(motion.y)
 	motion = move_and_slide(motion, UP)
 	for i in get_slide_count():
 		var collision = get_slide_collision(i)
@@ -100,6 +113,27 @@ func Death():
 	resetLevelTimer.connect("timeout",self,"ResetLevel") 
 	add_child(resetLevelTimer)
 	resetLevelTimer.start()
+
+func LevelEnd():
+	if motion.y < FALL_MAX:
+		motion.y += GRAVITY
+	if !is_on_floor():
+		$Sprite.play("Fall")
+		motion.x = 0
+	else:
+		$Sprite.play("Run")
+		if $".".position.x > endpoint.x:
+			$".".visible = false
+			motion.x = 0
+			var resetLevelTimer = Timer.new()
+			resetLevelTimer.set_wait_time(3)
+			resetLevelTimer.set_one_shot(true)
+			resetLevelTimer.connect("timeout",self,"ResetLevel") 
+			add_child(resetLevelTimer)
+			resetLevelTimer.start()
+		else: 
+			motion.x = WALK_SPEED
+	motion = move_and_slide(motion, UP)
 
 func Hurt():
 	if isInvincible == false:
