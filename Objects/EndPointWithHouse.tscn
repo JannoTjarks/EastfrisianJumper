@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Sprites/Environment/House.png" type="Texture" id=1]
+
+[node name="EndPoint" type="Node2D"]
+position = Vector2( 3890, 160 )
+
+[node name="House" type="Sprite" parent="."]
+position = Vector2( 14, -38 )
+z_index = -1
+texture = ExtResource( 1 )

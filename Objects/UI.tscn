@@ -1,0 +1,10 @@
+[gd_scene format=2]
+
+[node name="UI" type="CanvasLayer"]
+
+[node name="Lifebar" type="Sprite" parent="."]
+position = Vector2( 32, 16 )
+scale = Vector2( 0.3, 0.3 )
+__meta__ = {
+"_edit_group_": true
+}
