@@ -20,8 +20,19 @@ SpawnPoint = NodePath("../SpawnPoint")
 EndPoint = NodePath("../EndPoint")
 LifebarNode = NodePath("../UI")
 
-[node name="Enemy1" parent="." instance=ExtResource( 7 )]
+[node name="Enemys" type="Node" parent="."]
+
+[node name="Enemy1" parent="Enemys" instance=ExtResource( 7 )]
 position = Vector2( 364.127, 127.566 )
+
+[node name="Enemy2" parent="Enemys" instance=ExtResource( 7 )]
+position = Vector2( 1284.26, 157.485 )
+
+[node name="Enemy3" parent="Enemys" instance=ExtResource( 7 )]
+position = Vector2( 885.049, 157.025 )
+
+[node name="Enemy4" parent="Enemys" instance=ExtResource( 7 )]
+position = Vector2( 3199.11, 157.041 )
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = ExtResource( 1 )

@@ -1,54 +1,24 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://Sprites/Player/idle/player-idle-3.png" type="Texture" id=1]
-[ext_resource path="res://Sprites/Player/idle/player-idle-2.png" type="Texture" id=2]
-[ext_resource path="res://Sprites/Player/run/player-run-5.png" type="Texture" id=3]
-[ext_resource path="res://Sprites/Player/run/player-run-3.png" type="Texture" id=4]
-[ext_resource path="res://Sprites/Player/idle/player-idle-1.png" type="Texture" id=5]
-[ext_resource path="res://Sprites/Player/run/player-run-6.png" type="Texture" id=6]
-[ext_resource path="res://Sprites/Player/run/player-run-1.png" type="Texture" id=7]
-[ext_resource path="res://Sprites/Player/run/player-run-2.png" type="Texture" id=8]
-[ext_resource path="res://Sprites/Player/jump/player-jump-2.png" type="Texture" id=9]
-[ext_resource path="res://Sprites/Player/jump/player-jump-1.png" type="Texture" id=10]
-[ext_resource path="res://Sprites/Player/run/player-run-4.png" type="Texture" id=11]
-[ext_resource path="res://Sprites/Player/idle/player-idle-4.png" type="Texture" id=12]
-[ext_resource path="res://Sprites/Player/hurt/player-hurt-1.png" type="Texture" id=13]
-[ext_resource path="res://Sprites/Player/hurt/player-hurt-2.png" type="Texture" id=14]
+[ext_resource path="res://Sprites/Enemys/Pig/walk/pig3.png" type="Texture" id=1]
+[ext_resource path="res://Sprites/Enemys/Pig/walk/pig2.png" type="Texture" id=2]
+[ext_resource path="res://Sprites/Enemys/Pig/walk/pig1.png" type="Texture" id=3]
+[ext_resource path="res://Sprites/Enemys/Pig/walk/pig4.png" type="Texture" id=4]
 [ext_resource path="res://Scripts/Enemy1.gd" type="Script" id=15]
 
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 8, 10 )
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 14.6592, 9.76246 )
 
-[sub_resource type="SpriteFrames" id=1]
+[sub_resource type="SpriteFrames" id=2]
 animations = [ {
-"frames": [ ExtResource( 13 ), ExtResource( 14 ) ],
+"frames": [ ExtResource( 3 ), ExtResource( 2 ), ExtResource( 1 ), ExtResource( 4 ) ],
 "loop": true,
-"name": "Hurt",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 7 ), ExtResource( 8 ), ExtResource( 4 ), ExtResource( 11 ), ExtResource( 3 ), ExtResource( 6 ) ],
-"loop": true,
-"name": "Run",
-"speed": 10.0
-}, {
-"frames": [ ExtResource( 10 ) ],
-"loop": true,
-"name": "Jump",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 9 ) ],
-"loop": true,
-"name": "Fall",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 5 ), ExtResource( 2 ), ExtResource( 1 ), ExtResource( 12 ) ],
-"loop": true,
-"name": "Idle",
-"speed": 5.0
+"name": "walk",
+"speed": 8.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 7.86463, 0.286713 )
+extents = Vector2( 9.66462, 0.499531 )
 
 [node name="Enemy1" type="KinematicBody2D"]
 position = Vector2( 0.014986, -0.0565605 )
@@ -57,21 +27,34 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="CollisionShape2D_Body" type="CollisionShape2D" parent="."]
-position = Vector2( 0, 6 )
-shape = SubResource( 2 )
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 8 )
+scale = Vector2( 0.9, 0.9 )
+shape = SubResource( 1 )
+
+[node name="Area2D_Body" type="Area2D" parent="."]
+monitoring = false
+
+[node name="CollisionShape2D_Body" type="CollisionShape2D" parent="Area2D_Body"]
+position = Vector2( 0, 8 )
+shape = SubResource( 1 )
+disabled = true
 
 [node name="Sprite" type="AnimatedSprite" parent="."]
-frames = SubResource( 1 )
-animation = "Run"
+frames = SubResource( 2 )
+animation = "walk"
+frame = 1
 
 [node name="Area2D_Head" type="Area2D" parent="Sprite"]
 
 [node name="CollisionShape2D_Head" type="CollisionShape2D" parent="Sprite/Area2D_Head"]
-position = Vector2( 0, -4 )
+position = Vector2( 0, -3 )
 shape = SubResource( 3 )
+disabled = true
 
 [node name="RayCast_Floor" type="RayCast2D" parent="."]
+position = Vector2( 15, 5 )
 scale = Vector2( 1, 0.35 )
 enabled = true
+[connection signal="body_entered" from="Area2D_Body" to="." method="_on_Area2D_Body_body_entered"]
 [connection signal="body_entered" from="Sprite/Area2D_Head" to="." method="_on_Area2D_Head_body_entered"]
