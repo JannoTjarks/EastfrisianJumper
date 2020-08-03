@@ -29,6 +29,12 @@ window/size/test_height=768
 window/stretch/mode="2d"
 window/stretch/aspect="expand"
 
+[layer_names]
+
+2d_physics/layer_1="Player"
+2d_physics/layer_2="Ground"
+2d_physics/layer_3="Enemy"
+
 [rendering]
 
 quality/2d/use_pixel_snap=true

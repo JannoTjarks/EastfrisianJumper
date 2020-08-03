@@ -8,7 +8,8 @@ const WALK_SPEED = 70
 const DEATH_HEIGTH = 190
 
 var motion = Vector2()
-var rayCastOffset = 15
+var rayCastFloorOffset = 15
+var rayCastWallOffset = 12
 var isDead = false
 var isGoingToRight = false
 var movementDirectionIsChangable = true
@@ -22,18 +23,22 @@ func _physics_process(delta):
 		motion.y = 0
 		isDead = true
 		
-	if !$RayCast_Floor.is_colliding() && movementDirectionIsChangable:
+	if (!$RayCast_Floor.is_colliding() || $RayCast_Wall.is_colliding()) && movementDirectionIsChangable:
 		ChangeMovementDirection()
-		
+	
 	$Sprite.play()
 	
 	if isGoingToRight:
 		motion.x = min(motion.x + ACCELERATION, WALK_SPEED)
-		$RayCast_Floor.position.x = rayCastOffset
+		$RayCast_Floor.position.x = rayCastFloorOffset
+		$RayCast_Wall.position.x = rayCastWallOffset
+		$RayCast_Wall.scale.x = 1
 		$Sprite.flip_h = false
 	elif !isGoingToRight:
 		motion.x = max(motion.x - ACCELERATION, -WALK_SPEED)
-		$RayCast_Floor.position.x = rayCastOffset * -1		
+		$RayCast_Floor.position.x = rayCastFloorOffset * -1
+		$RayCast_Wall.position.x = rayCastWallOffset * -1
+		$RayCast_Wall.scale.x = -1
 		$Sprite.flip_h = true
 	else:
 		friction = true
@@ -46,6 +51,7 @@ func _physics_process(delta):
 
 func Death():
 	$Sprite.modulate = Color(1,0.3,0.3,0.8)
+	$Area2D_Body.monitoring = false
 	var deathTimer = Timer.new()
 	deathTimer.set_wait_time(0.1)
 	deathTimer.set_one_shot(true)
@@ -56,7 +62,7 @@ func Death():
 func ChangeMovementDirection():
 	movementDirectionIsChangable = false
 	var changeMovementDirection = Timer.new()
-	changeMovementDirection.set_wait_time(1)
+	changeMovementDirection.set_wait_time(0.5)
 	changeMovementDirection.set_one_shot(true)
 	changeMovementDirection.connect("timeout",self,"setMovementChangable") 
 	add_child(changeMovementDirection)
@@ -70,11 +76,11 @@ func ChangeMovementDirection():
 func setMovementChangable():
 	movementDirectionIsChangable = true
 
-func _on_Area2D_Head_body_entered(body):
-	if body.is_in_group("player"):
-		body.jump()
+func _on_Area2D_Head_body_entered(body):	
+	if body.get_collision_layer_bit(0):	
 		Death()
+		body.jump()
 
 func _on_Area2D_Body_body_entered(body):	
-	if body.is_in_group("player"):
-		body.hurt()		
+	if body.get_collision_layer_bit(0):
+		body.hurt()

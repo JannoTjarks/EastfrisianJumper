@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Sprites/Enemys/Pig/walk/pig3.png" type="Texture" id=1]
 [ext_resource path="res://Sprites/Enemys/Pig/walk/pig2.png" type="Texture" id=2]
@@ -7,7 +7,10 @@
 [ext_resource path="res://Scripts/Enemy1.gd" type="Script" id=15]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 14.6592, 9.76246 )
+extents = Vector2( 10.069, 11.069 )
+
+[sub_resource type="CapsuleShape2D" id=6]
+height = 12.0
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
@@ -17,11 +20,13 @@ animations = [ {
 "speed": 8.0
 } ]
 
-[sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 9.66462, 0.499531 )
+[sub_resource type="CapsuleShape2D" id=5]
+radius = 5.0
 
 [node name="Enemy1" type="KinematicBody2D"]
-position = Vector2( 0.014986, -0.0565605 )
+position = Vector2( 0.014986, -0.126713 )
+collision_layer = 4
+collision_mask = 2147483655
 script = ExtResource( 15 )
 __meta__ = {
 "_edit_group_": true
@@ -33,12 +38,13 @@ scale = Vector2( 0.9, 0.9 )
 shape = SubResource( 1 )
 
 [node name="Area2D_Body" type="Area2D" parent="."]
-monitoring = false
+collision_layer = 4
+collision_mask = 7
 
-[node name="CollisionShape2D_Body" type="CollisionShape2D" parent="Area2D_Body"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D_Body"]
 position = Vector2( 0, 8 )
-shape = SubResource( 1 )
-disabled = true
+rotation = 1.5708
+shape = SubResource( 6 )
 
 [node name="Sprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
@@ -46,15 +52,24 @@ animation = "walk"
 frame = 1
 
 [node name="Area2D_Head" type="Area2D" parent="Sprite"]
+collision_layer = 4
+collision_mask = 2147483655
 
-[node name="CollisionShape2D_Head" type="CollisionShape2D" parent="Sprite/Area2D_Head"]
-position = Vector2( 0, -3 )
-shape = SubResource( 3 )
-disabled = true
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/Area2D_Head"]
+position = Vector2( 0, 2 )
+rotation = 1.5708
+shape = SubResource( 5 )
 
 [node name="RayCast_Floor" type="RayCast2D" parent="."]
 position = Vector2( 15, 5 )
 scale = Vector2( 1, 0.35 )
 enabled = true
+collision_mask = 2
+
+[node name="RayCast_Wall" type="RayCast2D" parent="."]
+position = Vector2( 15, 10 )
+enabled = true
+cast_to = Vector2( 8, 0 )
+collision_mask = 2
 [connection signal="body_entered" from="Area2D_Body" to="." method="_on_Area2D_Body_body_entered"]
 [connection signal="body_entered" from="Sprite/Area2D_Head" to="." method="_on_Area2D_Head_body_entered"]

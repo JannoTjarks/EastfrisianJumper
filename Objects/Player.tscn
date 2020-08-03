@@ -23,6 +23,11 @@ animations = [ {
 "name": "Hurt",
 "speed": 5.0
 }, {
+"frames": [ ExtResource( 9 ) ],
+"loop": true,
+"name": "Fall",
+"speed": 5.0
+}, {
 "frames": [ ExtResource( 7 ), ExtResource( 8 ), ExtResource( 4 ), ExtResource( 11 ), ExtResource( 3 ), ExtResource( 6 ) ],
 "loop": true,
 "name": "Run",
@@ -31,11 +36,6 @@ animations = [ {
 "frames": [ ExtResource( 10 ) ],
 "loop": true,
 "name": "Jump",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 9 ) ],
-"loop": true,
-"name": "Fall",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 5 ), ExtResource( 2 ), ExtResource( 1 ), ExtResource( 12 ) ],
@@ -50,6 +50,7 @@ extents = Vector2( 8, 10 )
 [node name="Player" type="KinematicBody2D" groups=[
 "player",
 ]]
+collision_mask = 2
 script = ExtResource( 15 )
 __meta__ = {
 "_edit_group_": true

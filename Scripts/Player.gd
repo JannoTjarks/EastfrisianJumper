@@ -160,6 +160,7 @@ func hurt():
 		$Sprite.play("Hurt")
 		healthPoints = healthPoints - 1
 		lifebar.set_texture(arrayLifebar[healthPoints])
+		set_collision_layer_bit(0, false)
 		var InvincibleTimer = Timer.new()
 		InvincibleTimer.set_wait_time(2)
 		InvincibleTimer.set_one_shot(true)
@@ -178,6 +179,7 @@ func stopHurtAnimation():
 
 func removeInvincibilityFrames():
 	isInvincible = false
+	set_collision_layer_bit(0, true)
 
 func resetLevel():
    get_tree().reload_current_scene()
