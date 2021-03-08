@@ -25,7 +25,7 @@ var levelIsOver = false
 var motion = Vector2()
 
 func _ready():
-	$".".position = get_node(SpawnPoint).position
+	$".".position = get_node(SpawnPoint).position	
 	endpoint = get_node(EndPoint).position
 	lifebar = get_node(LifebarNode).find_node("Lifebar")
 	arrayLifebar = [preload("res://Sprites/Player/Health/0hearts.png"),
@@ -111,9 +111,9 @@ func walk(var direction, var isRunning):
 		else:
 			motion.x = max(motion.x - ACCELERATION, -WALK_SPEED)
 		$Sprite.flip_h = true
-	
+
 	if isHurt == false:
-		$Sprite.play("Run")
+		$Sprite.play("Run")				
 		
 func idle():
 		friction = true

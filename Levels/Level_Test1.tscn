@@ -23,7 +23,7 @@ LifebarNode = NodePath("../UI")
 [node name="Enemys" type="Node" parent="."]
 
 [node name="Enemy1" parent="Enemys" instance=ExtResource( 7 )]
-position = Vector2( 364.127, 127.566 )
+position = Vector2( 364.127, 124.566 )
 
 [node name="Enemy2" parent="Enemys" instance=ExtResource( 7 )]
 position = Vector2( 1284.26, 157.485 )
